@@ -1276,19 +1276,30 @@ void setup() {
 
   // init & tare Loadcells
   for (int i = LC1; i <= LC3; i++) {
+    yield();
     if (i < nLoadcells) {
       LoadCell[i].begin();
+      LoadCell[i].setSamplesInUse(HX711_SAMPLES);
       LoadCell[i].setCalFactor(calFactorLoadcell[i]);
 #if defined(ESP8266)
-      printConsole(T_BOOT, "init Loadcell " + String(i + 1));
+      printConsole(T_BOOT, "Loadcell init " + String(i + 1));
 #endif
     }
   }
 
+#if defined(ESP8266)
+  printConsole(T_BOOT, "Loadcells ready ");
+#endif
+  unsigned long now = millis();
   // stabilize scale values
-  while (millis() < STABILISINGTIME) {
+  while (millis() < (now  + STABILISINGTIME)) {
+    yield();
     updateLoadcells();
   }
+
+#if defined(ESP8266)
+  printConsole(T_BOOT, "Loadcells tare");
+#endif
 
   tareLoadcells();
 
@@ -1296,7 +1307,7 @@ void setup() {
 
 #if defined(ESP8266)
 
-  printConsole(T_BOOT, "Wifi: STA mode - connecing with: " + String(ssid_STA));
+  printConsole(T_BOOT, "Wifi: STA mode - connecting with: " + String(ssid_STA));
 
   // Start by connecting to a WiFi network
   WiFi.persistent(false);
@@ -1327,7 +1338,7 @@ void setup() {
     printConsole(T_BOOT, "Wifi: AP mode - create access point: " + String(ssid_AP));
     WiFi.mode(WIFI_AP);
     WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-    WiFi.softAP(ssid_AP, password_AP);
+    WiFi.softAP(ssid_AP, password_AP, 1, false, 1);
     printConsole(T_RUN, "Wifi: Connected, IP: " + String(WiFi.softAPIP().toString()));
   } else {
     printConsole(T_RUN, "Wifi: Connected, IP: " + String(WiFi.localIP().toString()));

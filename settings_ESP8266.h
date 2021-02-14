@@ -16,6 +16,7 @@
 #define LOADCELL1_CALIBRATION_FACTOR    900     // user set calibration factor
 #define LOADCELL2_CALIBRATION_FACTOR    900     // user set calibration factor
 #define LOADCELL3_CALIBRATION_FACTOR    900     // user set calibration factor
+#define HX711_SAMPLES                   32
 
 /*
 CG scale with 2 Loadcells:
